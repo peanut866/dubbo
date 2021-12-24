@@ -30,6 +30,11 @@ import java.util.List;
 @Adaptive
 public class AdaptiveExtensionFactory implements ExtensionFactory {
 
+    /**
+     * factories 中会存在这两种
+     *[org.apache.dubbo.common.extension.factory.SpiExtensionFactory@3e856100,
+     * org.apache.dubbo.config.spring.extension.SpringExtensionFactory@6e9a0bea]
+     */
     private final List<ExtensionFactory> factories;
 
     public AdaptiveExtensionFactory() {

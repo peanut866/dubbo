@@ -469,7 +469,7 @@ public class DubboProtocol extends AbstractProtocol {
 
             // If the clients is empty, then the first initialization is
             if (CollectionUtils.isEmpty(clients)) {
-                clients = buildReferenceCountExchangeClientList(url, connectNum);
+                clients = buildReferenceCountExchangeClientList(url, connectNum);// 创建dubbo 消费者以及连接上生产者
                 referenceClientMap.put(key, clients);
 
             } else {

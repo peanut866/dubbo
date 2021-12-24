@@ -694,8 +694,10 @@ public class ExtensionLoader<T> {
 
                 try {
                     String property = getSetterProperty(method);
+                    // objectFactory -> class org.apache.dubbo.common.extension.factory.AdaptiveExtensionFactory
                     Object object = objectFactory.getExtension(pt, property);
                     if (object != null) {
+                        // 不就是反射调用，填充set 属性嘛
                         method.invoke(instance, object);
                     }
                 } catch (Exception e) {
@@ -751,6 +753,10 @@ public class ExtensionLoader<T> {
         return getExtensionClasses().get(name);
     }
 
+    /**
+     * 获取所有的扩展类
+     * @return
+     */
     private Map<String, Class<?>> getExtensionClasses() {
         Map<String, Class<?>> classes = cachedClasses.get();
         if (classes == null) {
@@ -769,11 +775,11 @@ public class ExtensionLoader<T> {
      * synchronized in getExtensionClasses
      */
     private Map<String, Class<?>> loadExtensionClasses() {
-        cacheDefaultExtensionName();
+        cacheDefaultExtensionName();// 处理注解上的默认实现类
 
         Map<String, Class<?>> extensionClasses = new HashMap<>();
 
-        for (LoadingStrategy strategy : strategies) {
+        for (LoadingStrategy strategy : strategies) {// 加载指定文件夹下的配置文件
             loadDirectory(extensionClasses, strategy.directory(), type.getName(), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
             loadDirectory(extensionClasses, strategy.directory(), type.getName().replace("org.apache", "com.alibaba"), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
         }
@@ -785,7 +791,7 @@ public class ExtensionLoader<T> {
      * extract and cache default extension name if exists
      */
     private void cacheDefaultExtensionName() {
-        final SPI defaultAnnotation = type.getAnnotation(SPI.class);
+        final SPI defaultAnnotation = type.getAnnotation(SPI.class);// 获取 SPI 注解，这里的 type 变量是在调用 getExtensionLoader 方法时传入的
         if (defaultAnnotation == null) {
             return;
         }
@@ -1030,7 +1036,9 @@ public class ExtensionLoader<T> {
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
 
-    private Class<?> createAdaptiveExtensionClass() {
+    private Class<?> createAdaptiveExtensionClass() {// 创建扩展代理类
+        // 构建自适应拓展代码, cachedDefaultName 即为接口类上的@spi注解的值，type即为接口，主要是
+        // 重写被 @Adaptive注解修饰的方法，如果没有url参数中没有指定使用哪个实现类，默认使用@spi注解实现类
         String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate();
         ClassLoader classLoader = findClassLoader();
         org.apache.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(org.apache.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();

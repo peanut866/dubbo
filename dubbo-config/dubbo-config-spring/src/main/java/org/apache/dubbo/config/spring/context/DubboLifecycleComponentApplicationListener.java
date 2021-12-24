@@ -70,6 +70,7 @@ public class DubboLifecycleComponentApplicationListener extends OneTimeExecution
 
     private void initLifecycleComponents(ContextRefreshedEvent event) {
         ApplicationContext context = event.getApplicationContext();
+        // context -> AnnotationConfigServletWebServerApplicationContext
         ClassLoader classLoader = context.getClassLoader();
         lifecycleComponents = new LinkedList<>();
         // load the Beans of Lifecycle from ApplicationContext

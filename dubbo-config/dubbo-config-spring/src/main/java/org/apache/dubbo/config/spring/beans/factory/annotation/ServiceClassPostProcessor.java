@@ -125,7 +125,7 @@ public class ServiceClassPostProcessor implements BeanDefinitionRegistryPostProc
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 
-        // @since 2.7.5
+        // @since 2.7.5 dubbo启动入口之一, registry ->org.springframework.beans.factory.support.DefaultListableBeanFactory
         registerInfrastructureBean(registry, DubboBootstrapApplicationListener.BEAN_NAME, DubboBootstrapApplicationListener.class);
 
         Set<String> resolvedPackagesToScan = resolvePackagesToScan(packagesToScan);
@@ -148,6 +148,7 @@ public class ServiceClassPostProcessor implements BeanDefinitionRegistryPostProc
      */
     private void registerServiceBeans(Set<String> packagesToScan, BeanDefinitionRegistry registry) {
 
+        // environment -> StandardServletEnvironment
         DubboClassPathBeanDefinitionScanner scanner =
                 new DubboClassPathBeanDefinitionScanner(registry, environment, resourceLoader);
 
@@ -162,7 +163,7 @@ public class ServiceClassPostProcessor implements BeanDefinitionRegistryPostProc
 
         for (String packageToScan : packagesToScan) {
 
-            // Registers @Service Bean first
+            // Registers @Service Bean first , 通过spring 加载bean
             scanner.scan(packageToScan);
 
             // Finds all BeanDefinitionHolders of @Service whether @ComponentScan scans or not.
@@ -366,6 +367,7 @@ public class ServiceClassPostProcessor implements BeanDefinitionRegistryPostProc
         Set<String> resolvedPackagesToScan = new LinkedHashSet<String>(packagesToScan.size());
         for (String packageToScan : packagesToScan) {
             if (StringUtils.hasText(packageToScan)) {
+                //resolvePlaceholders -> 解析占位符
                 String resolvedPackageToScan = environment.resolvePlaceholders(packageToScan.trim());
                 resolvedPackagesToScan.add(resolvedPackageToScan);
             }

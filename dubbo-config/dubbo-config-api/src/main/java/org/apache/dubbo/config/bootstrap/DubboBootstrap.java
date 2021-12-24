@@ -889,11 +889,12 @@ public class DubboBootstrap extends GenericEventListener {
 
     /**
      * Start the bootstrap
+     * dubbo 入口
      */
     public DubboBootstrap start() {
         if (started.compareAndSet(false, true)) {
             ready.set(false);
-            initialize();
+            initialize();// 初始化数据
             if (logger.isInfoEnabled()) {
                 logger.info(NAME + " is starting...");
             }
@@ -904,7 +905,7 @@ public class DubboBootstrap extends GenericEventListener {
             if (!isOnlyRegisterProvider() || hasExportedServices()) {
                 // 2. export MetadataService
                 exportMetadataService();
-                //3. Register the local ServiceInstance if required
+                //3. Register the local ServiceInstance if required 注册中心注册
                 registerServiceInstance();
             }
 

@@ -227,6 +227,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         dispatch(new ReferenceConfigDestroyedEvent(this));
     }
 
+    /**
+     * refer 入口
+     */
     public synchronized void init() {
         if (initialized) {
             return;
